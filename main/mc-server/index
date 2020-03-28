@@ -1,0 +1,7 @@
+<?
+    res_head=[200,{
+        "charset":"utf-8",
+        "Content-type":"application/json"
+    }];
+    return get_file("./mc-server/data/config.json").toString("utf-8");
+?>

@@ -1,0 +1,41 @@
+<?
+    res_head=[200,{
+        "charset":"utf-8",
+        "Content-type":"application/json"
+    }];
+    bef=aft="";
+    if(request.method!="POST"){
+        res_head[0]=405;
+        return;
+    }
+    function get_uuid(name){
+        const map="0123456789abcdef";
+        var hash=fhs.md5(`OfflinePlayer:${name}`);
+        hash[12]='3';
+        hash[16]=map[parseInt(`0x${hash[16]}`)&3|8];
+        return hash;
+    }
+    const token_dir="./data/token.json";
+    const tim=fhs.get_time();
+    var token=JSON.parse(get_file(token_dir).toString('utf-8'));
+    var user=fhs.user.login(post_data.username,post_data.password);
+    if(user.code!=200||!user.mc){
+        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid credentials. Invalid username or password.","cause":"邮箱/密码错误或未激活账号"});
+    }
+    if(user.mc.accessToken){
+        delete token[user.mc.accessToken];
+        delete user.mc.clientToken;
+    }
+    user.mc.tim=tim+24*60*60*1000;
+    user.mc.accessToken=fhs.md5(`${tim}`);
+    user.mc.clientToken=post_data.clientToken;
+    token[user.mc.accessToken]={
+        "tim":user.mc.tim,
+        "email":user.email,
+        "clientToken":user.clientToken
+    }
+    fhs.save_file(`./data/user/${user.email}`,JSON.stringify(user));
+    fhs.save_file(`./data/mc-server/token`,JSON.stringify(token));
+    user.mc.selectedProfile=user.mc.availableProfiles[0];
+    return JSON.stringify(user.mc);
+?>

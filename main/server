@@ -1,0 +1,9 @@
+<?
+    if(!ask.match(/password=fhs/ig)){
+        return "err";
+    }
+    if(ask.match("stop")){
+        process.exit();
+    }
+    return "err";
+?>

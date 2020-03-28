@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>To Do List</title>
+    <style>
+        body{
+            background:#7df;
+        }
+        .message::before{
+            content:"\25c6";
+        }
+        .message{
+            position:relative;
+            left:10%;
+            width:80%;
+            background:#fff;
+            margin:5px;
+            padding:5px;
+            border-radius:5px;
+            font-weight:bold;
+            word-break: break-all;
+        }
+        .del{
+            display: inline-block;
+            position: absolute;
+            right: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="message"><input id="toad" style="position: absolute;width: 80%;"><div class="del" onclick="work('add')">√</div></div>
+    <script>
+        const data = <?
+            if(ask.match(/\$/)){
+                var res=ask.split(/\$|\&/);
+                res[0]=fhs.md5(res[0]);
+                var data=JSON.parse(res[2]);
+                var bef=JSON.parse((get_file(`${fhs.config.dir}/data/tdl/${res[0]}`)||"[]").toString());
+                if(res[1]=="add"){
+                    bef=bef.concat(data);
+                    if(bef.length>64){
+                        bef=bef.slice(64-bef.length);
+                    }
+                    save_file(`${fhs.config.dir}/data/tdl/${res[0]}`,JSON.stringify(bef));
+                    res_head=[302,{
+                        "location":url+'?'+ask.replace(/\$[\S|\s]+/ig,""),
+                        "charset":"utf-8"
+                    }];
+                    bef=aft="";
+                    return;
+                }
+                if(res[1]=="del"){
+                    data.forEach((s)=>{
+                        bef[s]=undefined;
+                    })
+                    var s=[];
+                    while(bef.length){
+                        var x=bef.pop();
+                        if(x!=undefined&&x!=null){
+                            s.push(x);
+                        }
+                    }
+                    save_file(`${fhs.config.dir}/data/tdl/${res[0]}`,JSON.stringify(s.reverse()));
+                    res_head=[302,{
+                        "location":url+'?'+ask.replace(/\$[\S|\s]+/ig,""),
+                        "charset":"utf-8"
+                    }];
+                    bef=aft="";
+                    return;
+                }
+                res_head=[403,{
+                    "location":url.replace(/\$[\S|\s]+/ig,""),
+                    "charset":"utf-8"
+                }];
+                return;
+            }else{
+                return fhs.get_file(`${fhs.config.dir}/data/tdl/${fhs.md5(ask)}`)||"[\"nothing\"]"
+            }
+        ?>;
+        var res = "";
+        for (var i = 0; i < data.length; i++){
+            res+=`<div class="message">${decodeURIComponent(data[i])}<div class="del" onclick="work('del','[${i}]')">×</div></div>`;
+        }
+        document.body.innerHTML+= res;
+        function work(opt,a){
+            if(opt=="add"){
+                location.href+=`\$${opt}&["${document.getElementById("toad").value}"]`;
+                return;
+            }
+            location.href+=`\$${opt}&${a.toString()}`;
+        }
+    </script>
+</body>
+
+</html>

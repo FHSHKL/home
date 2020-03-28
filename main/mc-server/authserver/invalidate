@@ -1,0 +1,23 @@
+<?
+    res_head=[204,{
+        "charset":"utf-8"
+    }];
+    bef=aft="";
+    if(request.method!="POST"){
+        res_head[0]=405;
+        return;
+    }
+    const user_dir="./mc-server/data/user.json";
+    const token_dir="./mc-server/data/accesstoken.json";
+    var tim=new Date().getTime();
+    var data=JSON.parse(get_file(user_dir).toString('utf-8'));
+    var token=JSON.parse(get_file(token_dir).toString('utf-8'));
+    console.log("data:",data);
+    console.log("token:",token);
+    if(token[post_data.accesstoken]){
+        var user=token[post_data.accesstoken];
+        delete data[user.username].accesstoken;
+        delete user;
+    }
+    return;
+?>

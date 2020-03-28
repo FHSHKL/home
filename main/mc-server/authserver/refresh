@@ -1,0 +1,52 @@
+<?
+    res_head=[204,{
+        "charset":"utf-8"
+    }];
+    bef=aft="";
+    if(request.method!="POST"){
+        res_head[0]=405;
+        return;
+    }
+    const user_dir="./mc-server/data/user.json";
+    const token_dir="./mc-server/data/accesstoken.json";
+    var tim=new Date().getTime();
+    var data=JSON.parse(get_file(user_dir).toString('utf-8'));
+    var token=JSON.parse(get_file(token_dir).toString('utf-8'));
+    console.log("data:",data);
+    console.log("token:",token);
+    if(!token[post_data.accessToken]){
+        res_head[0]=403;
+        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"无效令牌"});
+    }
+    var user=token[post_data.accessToken];
+    if(tim>parseInt(user.tim)){
+        res_head[0]=403;
+        delete user;
+        save_file(token_dir,JSON.stringify(token));
+        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"登录超时"});
+    }
+    if(post_data.clientToken&&user.clientToken){
+        if(user.clientToken!=post_data.clientToken){
+            res_head[0]=403;
+            return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"未知客户端"});
+        }
+    }
+    tim=(tim+24*60*60*1000).toString();
+    var user=data[post_data.accessToken];
+    var username=token[user.accessToken].username.toString();
+    delete token[user.accessToken];
+    user.accessToken=fhs.md5(tim);
+    token[user.accessToken]={
+        "username":username,
+        "tim":tim
+    }
+    if(post_data.clientToken){
+        token[user.accessToken].clientToken=clientToken;
+    }
+    save_file(user_dir,JSON.stringify(data));
+    save_file(token_dir,JSON.stringify(token));
+    console.log("user:",user);
+    console.log("data:",data);
+    console.log("token:",token);
+    return JSON.stringify(user);
+?>

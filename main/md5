@@ -1,0 +1,6 @@
+<?
+    if(ask){
+        return fhs.md5(ask);
+    }
+    return fhs.md5("FHS");
+?>

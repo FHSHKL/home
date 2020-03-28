@@ -1,0 +1,47 @@
+<?
+    res_head=[204,{
+        "charset":"utf-8"
+    }];
+    bef=aft="";
+    if(request.method!="POST"){
+        res_head[0]=405;
+        return;
+    }
+    const user_dir="./mc-server/data/user.json";
+    const join_dir="./mc-server/data/serverid.json";
+    const token_dir="./mc-server/data/accesstoken.json";
+    var tim=new Date().getTime();
+    var data=JSON.parse(get_file(user_dir).toString('utf-8'));
+    var token=JSON.parse(get_file(token_dir).toString('utf-8'));
+    var serverId=JSON.parse(get_file(join_dir).toString('utf-8'));
+    console.log("data:",data);
+    console.log("token:",token);
+    console.log("serverId:",serverId);
+    if(!token[post_data.accessToken]){
+        res_head[0]=403;
+        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"无效令牌"});
+    }
+    var user=token[post_data.accessToken];
+    if(tim>parseInt(user.tim)){
+        res_head[0]=403;
+        delete user;
+        save_file(token_dir,JSON.stringify(token));
+        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"登录超时"});
+    }
+    if(post_data.selectedProfile!=data[user.username].id){
+        res_head[0]=403;
+        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"未知用户"});
+    }
+    serverId[data[user.username].name]={
+        "id":post_data.selectedProfile,
+        "serverId":post_data.serverId,
+        "name":data[user.username].name,
+        "properties":data[user.username].properties
+    };
+    save_file(token_dir,JSON.stringify(token));
+    save_file(join_dir,JSON.stringify(serverId));
+    console.log("after-save");
+    console.log("token:",token);
+    console.log("serverId:",serverId);
+    return;
+?>

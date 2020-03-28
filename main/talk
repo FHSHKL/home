@@ -1,0 +1,259 @@
+<?
+    if(ser_type=="https"){
+    res_head=[302,{
+        "location":`http://${fhs.config.domain}:6801/talk`,
+        "charset":"utf-8"
+    }];
+    bef=aft="";
+}
+?>
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>TALK by fhs</title>
+
+    <style>
+        body{
+            background-color: rgb(239, 239, 239);
+        }
+        .main{
+            position: absolute;
+            left: 5%;
+            top:5%;
+            width: 90%;
+            height: 90%;
+            background-color: #fff;
+        }
+        .side-bar{
+            position: absolute;
+            height: 100%;
+            width: 20%;
+
+            border-right: 1px solid #999;
+        }
+        .icon{
+            position: absolute;
+            padding: 0px;
+
+            width: 100%;
+            height: 10%;
+
+            text-align: center;
+
+            border-bottom: 1px solid #999;
+        }
+        .user-lists{
+            position: absolute;
+            top:10%;
+            width: 100%;
+            height: 80%;
+
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .sider-user{
+            cursor: pointer;
+            width: 100%;
+            height: 5%;
+            border-bottom: 1px solid #555;
+        }
+        .side-bar h3{
+            width: 100%;
+            height: 100%;
+            margin: 0px;
+            text-align: center;
+
+            transition: all 0.3s;
+        }
+        .side-bar h3:hover{
+            background-color: #666;
+            color:#fff;
+        }
+        .content{
+            position: absolute;
+            left: 20%;
+            height: 100%;
+            width: 80%;
+        }
+        .mess{
+            width: 100%;
+            height: 80%;
+
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+        .mes{
+            /*width: 100%;*/
+            margin: 5px;
+
+            font-size: large;
+            /*margin: 5px;*/
+            padding-top: 5px;
+            padding-bottom: 5px;
+            padding-left: 5px;
+            /*border:solid 2px #6cf;*/
+            border: solid 1px #000;
+            max-height: 80%;
+            background-color: #eee;
+        }
+        .sen{
+            position: absolute;
+            top: 80%;
+            right: 0px;
+            left: 0px;
+            bottom:5px;
+
+        }
+        .sen textarea{
+            position: absolute;
+            background: transparent;
+            left: 5px;
+            top: 5px;
+            bottom: 5px;
+            right: 5px;
+            width: 90%;
+            border:solid 1px #6cf;
+        }
+        .but{
+            position: absolute;
+            cursor: pointer;
+            text-align: center;
+            left: 90%;
+            right: 5px;
+            top: 5px;
+            bottom: 5px;
+            background-color: red;
+            display: table-cell;
+            vertical-align:middle;
+
+            font-weight:bolder;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="main">
+        <div class="side-bar">
+            <div class="icon"><h2>Message</h2></div>
+            <div id="user_list" class="user-lists">
+            </div>
+        </div>
+        <div class="content">
+            <div id="content" class="mess">
+            </div>
+            <div class="sen">
+                <textarea id="mes"></textarea>
+                <div class="but" onclick="send()">send</button>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function cli_init(){
+            document.getElementById("mes").onkeyup=function(e){
+                if(e.key=="Enter"){
+                    send();
+                }
+            }
+        }
+        cli_init();
+        
+        const client= new WebSocket(`ws://${location.hostname}:6803`);
+        if(client.readyState==3){
+            document.body.innerHTML=`<div class="mes">error:connect error</div>`;
+        }
+
+        function add_user(name){
+            console.log(name);
+            var usl=document.getElementById("user_list");
+            usl.innerHTML+=
+            `<div class="sider-user" id="user-${name}" onclick="set('${name}')"><h3>${name}</h3></div>`;
+        }
+        function remove_user(name){
+            var usl=document.getElementById("user_list");
+            var us=document.getElementById(`user-${name}`);
+            if(us){
+                usl.removeChild(us);
+            }
+        }
+        function set_user(a){
+            a=a.match(/[a-z|0-9]+/ig);
+            if(a){
+                var usl=document.getElementById("user_list");
+                usl.innerHTML="";
+                a.forEach((val)=>{
+                    add_user(val);
+                })
+            }
+        }
+        function set(name){
+            document.getElementById("mes").value=`/send ${name} `;
+        }
+        function work_command(a){
+            if(a.match(/\/web user/i)){
+                a=a.replace(/\/web user /i,'');
+                set_user(a);
+                return;
+            }
+            if(a.match(/\/web add_user/i)){
+                a=a.replace(/\/web add_user /i,'');
+                add_user(a);
+                return;
+            }
+            if(a.match(/\/web remove_user/i)){
+                a=a.replace(/\/web remove_user /i,'');
+                remove_user(a);
+                return;
+            }
+            if(a.match(/\/web command/i)){
+                a=a.replace(/\/web command /i,'');
+                try{
+                    eval(a);
+                }
+                catch(err){
+                    console.log(`err:${a}`);
+                    console.log(err);
+                }
+            }
+        }
+        const matchList  = {
+            '&lt;': '<',
+            '&gt;': '>',
+            '&amp;': '&',
+            '&#34;': '"',
+            '&quot;': '"',
+            '&#39;': "'"
+        };
+        const HtmlFilter = (text) => {
+            let regStr = '(' + Object.keys(matchList).toString() + ')';
+            regStr = regStr.replace(/,/g, ')|(');
+            const regExp = new RegExp(regStr, 'g');
+            return text.replace(regExp, match => matchList[match]);
+        };
+        client.onopen=function () {
+            console.log(`[CLIENT] open`);
+        };
+        client.onmessage=function (message) {
+            console.log(message);
+            message=message.data;
+            if(message[0]=='/'){
+                work_command(message);
+                return;
+            }
+            var mess=document.createElement('div');
+            mess.innerHTML=HtmlFilter(message);
+            mess.setAttribute("class","mes");
+            document.getElementById("content").appendChild(mess);
+        };
+        function send(){
+            var mes=document.getElementById("mes");
+            mes.value=mes.value.replace(/\n/g,'');
+            client.send(mes.value);
+            mes.value="";
+        }
+    </script>
+</body>
+
+</html>

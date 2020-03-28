@@ -1,0 +1,25 @@
+{
+    "email":"fa727f7c0efb5b9fa4da73be3238e2a0",
+    "password":"4e5e1d60db8c1674226acfd6c91f2ea6",
+    "available":true,
+    "name":"FHS",
+    "mc":{
+        /*
+            "accessToken":"acc",
+            "clientToken":"",
+            "tim":
+        */
+        "availableProfiles":[
+            {
+                "name":"FHS",
+                "id":"1d3b331ad38230de9dada3aa82a73fbb",
+                "properties":[
+                    {
+                        "name":"preferredLanguage",
+                        "zh_CN"
+                    }
+                ]
+            }
+        ]
+    }
+}

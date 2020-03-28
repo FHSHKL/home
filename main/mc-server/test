@@ -1,0 +1,10 @@
+<?
+    function get_uuid(name){
+        const map="0123456789abcdef";
+        var hash=fhs.md5(`OfflinePlayer:${name}`);
+        hash[12]='3';
+        hash[16]=map[parseInt(`0x${hash[16]}`)&3|8];
+        return hash;
+    }
+    return get_uuid(ask);
+?>

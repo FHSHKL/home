@@ -1,0 +1,28 @@
+<?
+    res_head=[200,{
+        "charset":"utf-8"
+    }];
+    bef=aft="";
+    if(request.method!="GET"){
+        res_head[0]=405;
+        return;
+    }
+    const join_dir="./mc-server/data/serverid.json";
+    var serverId=JSON.parse(get_file(join_dir).toString('utf-8'));
+    var ask_data=ask.match(/[^\?\&=]+=[^\?\&=]+/ig);
+    post_data={};
+    ask_data.forEach((s)=>{
+        s=s.match(/[^=]+/ig);
+        post_data[s[0]]=s[1];
+    })
+    console.log("serverId:",serverId);
+    console.log("ask_data:",ask_data);
+    console.log("post_data:",post_data);
+    if(serverId[post_data.username].serverId!=post_data.serverId){
+        res_head[0]=204;
+        return;
+    }
+    delete serverId[post_data.username].serverId;
+    console.log("res:",serverId[post_data.username]);
+    return JSON.stringify(serverId[post_data.username]);
+?>

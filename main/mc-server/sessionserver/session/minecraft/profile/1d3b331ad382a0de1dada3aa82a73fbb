@@ -1,0 +1,12 @@
+<?
+    return JSON.stringify({
+        "id":"1d3b331ad382a0de1dada3aa82a73fbb",
+        "name":"FHS",
+        "progerties":[
+            {
+                "name":"preferredLanguage",
+                "value":"en"
+            }
+        ]
+    })
+?>
