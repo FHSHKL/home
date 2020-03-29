@@ -1,5 +1,5 @@
 <?
-    res_head=[204,{
+    res_head=[200,{
         "charset":"utf-8"
     }];
     bef=aft="";
@@ -7,46 +7,64 @@
         res_head[0]=405;
         return;
     }
-    const user_dir="./mc-server/data/user.json";
-    const token_dir="./mc-server/data/accesstoken.json";
-    var tim=new Date().getTime();
-    var data=JSON.parse(get_file(user_dir).toString('utf-8'));
+    const token_dir=`${fhs.config.dir}/data/mc-server/token.json`;
+    var tim=fhs.get_time();
     var token=JSON.parse(get_file(token_dir).toString('utf-8'));
-    console.log("data:",data);
-    console.log("token:",token);
     if(!token[post_data.accessToken]){
         res_head[0]=403;
         return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"无效令牌"});
     }
-    var user=token[post_data.accessToken];
-    if(tim>parseInt(user.tim)){
+    var user_token=token[post_data.accessToken];
+    if(tim>user_token.tim){
         res_head[0]=403;
-        delete user;
+        delete user_token;
         save_file(token_dir,JSON.stringify(token));
-        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"登录超时"});
+        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"无效令牌"});
     }
-    if(post_data.clientToken&&user.clientToken){
-        if(user.clientToken!=post_data.clientToken){
+    if(post_data.clientToken&&user_token.clientToken){
+        if(user_token.clientToken!=post_data.clientToken){
             res_head[0]=403;
-            return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"未知客户端"});
+            return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"无效令牌"});
         }
     }
-    tim=(tim+24*60*60*1000).toString();
-    var user=data[post_data.accessToken];
-    var username=token[user.accessToken].username.toString();
-    delete token[user.accessToken];
-    user.accessToken=fhs.md5(tim);
-    token[user.accessToken]={
-        "username":username,
-        "tim":tim
+    const user_dir=`${fhs.config.dir}/data/user/${user_token.email}`;
+    var user=JSON.parse(get_file(user_dir).toString('utf-8'));
+    var res_user={};
+    if(post_data.selectedProfile){
+        if(user_token.selectedProfile){
+            res_head[0]=400;
+            return JSON.stringify({"error":"IllegalArgumentException","errorMessage":"Access token already has a profile assigned.","cause":"试图向一个已经绑定了角色的令牌指定其要绑定的角色"});
+        }
+        var profile=fhs.get_file(`${fhs.config.dir}/main/mc-server/sessionserver/session/minecraft/profile/${post_data.selectedProfile.id}`);
+        if(!profile){
+            res_head[0]=403;
+            return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"试图使用一个错误的角色加入服务器"});
+        }
+        profile=JSON.parse(profile.toString('utf-8'));
+        if(profile.userId!=user.email){
+            res_head[0]=403;
+            return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"undefined","cause":"试图向一个令牌绑定不属于其对应用户的角色"});
+        }
+        res_user.selectedProfile=profile;
+        user_token.selectedProfile=post_data.selectedProfile.id;
     }
-    if(post_data.clientToken){
-        token[user.accessToken].clientToken=clientToken;
+    var new_accessToken=fhs.md5(`${tim}`);
+    token[new_accessToken]={
+        "tim":tim+24*60*60*1000,
+        "email":user.email,
+        "accessToken":new_accessToken,
+        "clientToken":post_data.clientToken||user_token.clientToken,
+        "selectedProfile":user_token.selectedProfile
     }
-    save_file(user_dir,JSON.stringify(data));
+    delete user.mc.token[post_data.accessToken];
+    delete token[post_data.accessToken];
+    user.mc.token[new_accessToken]=true;
+    if(post_data.requestUser){
+        res_user.user=user.mc.user;
+    }
+    res_user.accessToken=new_accessToken;
+    res_user.clientToken=token[new_accessToken].clientToken;
+    save_file(user_dir,JSON.stringify(user));
     save_file(token_dir,JSON.stringify(token));
-    console.log("user:",user);
-    console.log("data:",data);
-    console.log("token:",token);
-    return JSON.stringify(user);
+    return JSON.stringify(res_user);
 ?>

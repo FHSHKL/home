@@ -7,24 +7,20 @@
         res_head[0]=405;
         return;
     }
-    const user_dir="./mc-server/data/user.json";
-    const token_dir="./mc-server/data/accesstoken.json";
-    var tim=new Date().getTime();
-    var data=JSON.parse(get_file(user_dir).toString('utf-8'));
+    const token_dir=`${fhs.config.dir}/data/mc-server/token.json`;
+    var tim=fhs.get_time();
     var token=JSON.parse(get_file(token_dir).toString('utf-8'));
-    console.log("data:",data);
-    console.log("token:",token);
-    if(!data[post_data.username]||data[post_data.username].password!=post_data.password){
+    var res=fhs.user.login(post_data.username,post_data.password);
+    if(res.code!=200){
         return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid credentials. Invalid username or password.","cause":"邮箱或密码错误"});
     }
-    var user=data[post_data.username];
-    if(user.accessToken){
-        delete token[user.accessToken];
-        delete user.accessToken;
+    const user_dir=`${fhs.config.dir}/data/user/${user.email}`;
+    var user=JSON.parse(get_file(user_dir).toString('utf-8'));
+    for(key in user.mc.token){
+        delete token[key];
     }
-    save_file(user_dir,JSON.stringify(data));
+    user.mc.token=[];
+    save_file(user_dir,JSON.stringify(user));
     save_file(token_dir,JSON.stringify(token));
-    console.log("data:",data);
-    console.log("token:",token);
     return;
 ?>

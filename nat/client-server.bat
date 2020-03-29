@@ -1,4 +1,4 @@
 @echo off
 cls
-node client.js server fhs2
+node client_old.js server fhs2
 pause

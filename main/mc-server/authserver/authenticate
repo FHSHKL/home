@@ -15,27 +15,36 @@
         hash[16]=map[parseInt(`0x${hash[16]}`)&3|8];
         return hash;
     }
-    const token_dir="./data/token.json";
     const tim=fhs.get_time();
+    const token_dir=`${fhs.config.dir}/data/mc-server/token.json`;
     var token=JSON.parse(get_file(token_dir).toString('utf-8'));
     var user=fhs.user.login(post_data.username,post_data.password);
     if(user.code!=200||!user.mc){
         return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid credentials. Invalid username or password.","cause":"邮箱/密码错误或未激活账号"});
     }
-    if(user.mc.accessToken){
-        delete token[user.mc.accessToken];
-        delete user.mc.clientToken;
-    }
-    user.mc.tim=tim+24*60*60*1000;
-    user.mc.accessToken=fhs.md5(`${tim}`);
-    user.mc.clientToken=post_data.clientToken;
-    token[user.mc.accessToken]={
-        "tim":user.mc.tim,
+    var new_accessToken=fhs.md5(`${tim}`);
+    const user_dir=`${fhs.config.dir}/data/user/${user.email}`;
+    user.mc.token[new_accessToken]=true;
+    save_file(user_dir,JSON.stringify(user));
+    token[new_accessToken]={
+        "tim":tim+24*60*60*1000,
         "email":user.email,
-        "clientToken":user.clientToken
+        "clientToken":post_data.clientToken,
+        "accessToken":new_accessToken
     }
-    fhs.save_file(`./data/user/${user.email}`,JSON.stringify(user));
-    fhs.save_file(`./data/mc-server/token`,JSON.stringify(token));
-    user.mc.selectedProfile=user.mc.availableProfiles[0];
+    user.mc.availableProfiles=[];
+    for(var i=0;i<user.mc.Profiles.length;i++){
+        user.mc.availableProfiles.push(JSON.parse(fhs.get_file(`${fhs.config.dir}/main/mc-server/sessionserver/session/minecraft/profile/${user.mc.Profiles[i]}`).toString('utf-8')));
+    }
+    if(user.mc.availableProfiles.length==1){
+        user.mc.selectedProfile=user.mc.availableProfiles[0];
+        token[user.mc.accessToken].selectedProfile=user.mc.selectedProfile.id;
+    }
+    if(!post_data.requestUser){
+        delete user.mc.user;
+    }
+    user.mc.accessToken=new_accessToken;
+    user.mc.clientToken=token[new_accessToken].clientToken;
+    fhs.save_file(`${fhs.config.dir}/data/mc-server/token.json`,JSON.stringify(token));
     return JSON.stringify(user.mc);
 ?>

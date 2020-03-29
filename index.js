@@ -11,13 +11,8 @@ const pre_server_list=[
 var server=[];
 
 for(var i=0;i<server_list.length;i++){
-    server[i]=exec(`node ${fhs.config.dir}/${server_list[i]}/index.js`,function(err,sto){
-        console.log(err,sto);
-        if(err){
-            console.log(`[ser-err]name:${server_list[i]} id:${i} err:${err}`);
-        }
-        if(sto){
-            console.log(`[ser-ifo]name:${server_list[i]} id:${i} err:${err}`);
-        }
+    server[i]=exec(`node ${fhs.config.dir}/${server_list[i]}/index.js`,{});
+    server[i].stdout.on('data',function(data){
+        process.stdout.write(`[ser-ifo]name:\x1B[32m${server_list[i]}\x1B[39m id:\x1B[32m${i}\x1B[39m data:\n\x1B[32m${data}\x1B[39m`);
     })
 }

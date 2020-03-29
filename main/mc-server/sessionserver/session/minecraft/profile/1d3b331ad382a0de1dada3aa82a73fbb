@@ -1,12 +1,11 @@
-<?
-    return JSON.stringify({
-        "id":"1d3b331ad382a0de1dada3aa82a73fbb",
-        "name":"FHS",
-        "progerties":[
-            {
-                "name":"preferredLanguage",
-                "value":"en"
-            }
-        ]
-    })
-?>
+{
+    "id":"1d3b331ad382a0de1dada3aa82a73fbb",
+    "name":"FHS",
+    "progerties":[
+        {
+            "name":"textures",
+            "value":"JTdCJTBBJTIwJTIwJTIwJTIwJTIydGltZXN0YW1wJTIyJTNBMCUyQyUwQSUyMCUyMCUyMCUyMCUyMnByb2ZpbGVJZCUyMiUzQSUyMjFkM2IzMzFhZDM4MjMwZGU5ZGFkYTNhYTgyYTczZmJiJTIyJTJDJTBBJTIwJTIwJTIwJTIwJTIycHJvZmlsZU5hbWUlMjIlM0ElMjJGSFMlMjIlMkMlMEElMjAlMjAlMjAlMjAlMjJ0ZXh0dXJlcyUyMiUzQSU3QiUwQSUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMCUyMlNLSU4lMjIlM0ElN0IlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjJ1cmwlMjIlM0ElMjJodHRwcyUzQS8vaHVva3Vsb3UudGslM0E2ODAwL2Nkbi9zdGV2ZS5wbmclMjIlMEElMjAlMjAlMjAlMjAlMjAlMjAlMjAlMjAlN0QlMEElMjAlMjAlMjAlMjAlN0QlMEElN0Q="
+        }
+    ],
+    "userId":"fa727f7c0efb5b9fa4da73be3238e2a0"
+}

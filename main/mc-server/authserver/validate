@@ -7,24 +7,24 @@
         res_head[0]=405;
         return;
     }
-    const token_dir="./mc-server/data/accesstoken.json";
-    var tim=new Date().getTime();
+    const token_dir=`${fhs.config.dir}/data/mc-server/token.json`;
+    var tim=fhs.get_time();
     var token=JSON.parse(get_file(token_dir).toString('utf-8'));
     if(!token[post_data.accessToken]){
         res_head[0]=403;
         return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"无效令牌"});
     }
     var user=token[post_data.accessToken];
-    if(tim>parseInt(user.tim)){
+    if(tim>user.tim){
         res_head[0]=403;
         delete user;
         save_file(token_dir,JSON.stringify(token));
-        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"登录超时"});
+        return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"无效令牌"});
     }
     if(post_data.clientToken&&user.clientToken){
         if(user.clientToken!=post_data.clientToken){
             res_head[0]=403;
-            return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"未知客户端"});
+            return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"无效令牌"});
         }
     }
     return;

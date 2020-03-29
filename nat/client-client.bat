@@ -1,3 +1,3 @@
 @echo off
-node client.js client fhs2
+node client_old.js client fhs2
 pause

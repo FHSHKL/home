@@ -1,7 +1,7 @@
 const net=require('net');
 const server=new net.Socket();
 const port=6804;
-const hostname="huokulou.tk";
+const hostname="ip172-18-0-13-bpvj2tbcktm000c0p5a0-6804.direct.labs.play-with-docker.com";
 server.setEncoding('utf-8');
 
 console.log(process.argv);

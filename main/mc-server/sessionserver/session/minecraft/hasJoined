@@ -7,22 +7,19 @@
         res_head[0]=405;
         return;
     }
-    const join_dir="./mc-server/data/serverid.json";
-    var serverId=JSON.parse(get_file(join_dir).toString('utf-8'));
-    var ask_data=ask.match(/[^\?\&=]+=[^\?\&=]+/ig);
+    const token_dir=`${fhs.config.dir}/data/mc-server/token.json`;
+    const server_dir=`${fhs.config.dir}/data/mc-server/server.json`;
+    var tim=fhs.get_time();
+    var token=JSON.parse(get_file(token_dir).toString('utf-8'));
+    var server=JSON.parse(get_file(server_dir).toString('utf-8'));
     post_data={};
     ask_data.forEach((s)=>{
         s=s.match(/[^=]+/ig);
         post_data[s[0]]=s[1];
     })
-    console.log("serverId:",serverId);
-    console.log("ask_data:",ask_data);
-    console.log("post_data:",post_data);
-    if(serverId[post_data.username].serverId!=post_data.serverId){
+    if(!server[post_data.username]||server[post_data.username]!=post_data.serverId){
         res_head[0]=204;
         return;
     }
-    delete serverId[post_data.username].serverId;
-    console.log("res:",serverId[post_data.username]);
-    return JSON.stringify(serverId[post_data.username]);
+    return fhs.get_file(`${fhs.config.dir}/main/mc-server/sessionserver/session/minecraft/profile/${post_data.username}`).toString('utf-8');
 ?>

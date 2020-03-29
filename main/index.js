@@ -25,7 +25,7 @@ function work_message(request,responce,ser_type,post_data){
         url=url.replace(/\?[\s|\S]+/g,'');
         ask=ask.slice(1);
     }
-    console.log(`[ser-web]url:${url} ask:${ask}`);
+    console.log(`[ser-web]url:${url} ask:${ask} post:${JSON.stringify(post_data)}`);
     var web_cli=get_file(`${fhs.config.dir}/main${url}`);
     if(!web_cli){
         responce.writeHead(404);

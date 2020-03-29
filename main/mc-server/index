@@ -3,5 +3,5 @@
         "charset":"utf-8",
         "Content-type":"application/json"
     }];
-    return get_file("./mc-server/data/config.json").toString("utf-8");
+    return get_file(`${fhs.config.dir}/data/mc-server/config.json`).toString("utf-8");
 ?>
