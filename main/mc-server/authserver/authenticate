@@ -10,10 +10,10 @@
     }
     function get_uuid(name){
         const map="0123456789abcdef";
-        var hash=fhs.md5(`OfflinePlayer:${name}`);
+        var hash=fhs.md5(`OfflinePlayer:${name}`).split('');
         hash[12]='3';
         hash[16]=map[parseInt(`0x${hash[16]}`)&3|8];
-        return hash;
+        return hash.join('');
     }
     const tim=fhs.get_time();
     const token_dir=`${fhs.config.dir}/data/mc-server/token.json`;
@@ -38,7 +38,7 @@
     }
     if(user.mc.availableProfiles.length==1){
         user.mc.selectedProfile=user.mc.availableProfiles[0];
-        token[user.mc.accessToken].selectedProfile=user.mc.selectedProfile.id;
+        token[new_accessToken].selectedProfile=user.mc.selectedProfile.id;
     }
     if(!post_data.requestUser){
         delete user.mc.user;

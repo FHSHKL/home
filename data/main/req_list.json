@@ -1,0 +1,12 @@
+{
+    "list":[
+        {
+            "reg":"/mc-server/textures/",
+            "opt":"res_head[1]={\"content-type\":\"image/png\",\"Connection\":\"close\"}"
+        },
+        {
+            "reg":"/mc-server/sessionserver/session/minecraft/profile/",
+            "opt":"res_head[1]={\"content-type\":\"application/json\"}"
+        }
+    ]
+}

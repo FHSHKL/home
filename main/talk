@@ -1,4 +1,5 @@
 <?
+    res_head[1]["content-type"]="text/html";
     if(ser_type=="https"){
     res_head=[302,{
         "location":`http://${fhs.config.domain}:6801/talk`,

@@ -27,7 +27,7 @@
         res_head[0]=403;
         return JSON.stringify({"error":"ForbiddenOperationException","errorMessage":"Invalid token.","cause":"未知用户"});
     }
-    server[post_data.username]=post_data.serverId;
+    server[token[post_data.accessToken].selectedProfile]=post_data.serverId;
     save_file(server_dir,JSON.stringify(server));
     return;
 ?>

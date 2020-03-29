@@ -7,16 +7,25 @@
         res_head[0]=405;
         return;
     }
+    function get_uuid(name){
+        const map="0123456789abcdef";
+        var hash=fhs.md5(`OfflinePlayer:${name}`).split('');
+        hash[12]='3';
+        hash[16]=map[parseInt(`0x${hash[16]}`)&3|8];
+        return hash.join('');
+    }
     const token_dir=`${fhs.config.dir}/data/mc-server/token.json`;
     const server_dir=`${fhs.config.dir}/data/mc-server/server.json`;
     var tim=fhs.get_time();
     var token=JSON.parse(get_file(token_dir).toString('utf-8'));
     var server=JSON.parse(get_file(server_dir).toString('utf-8'));
     post_data={};
+    var ask_data=ask.split('&')
     ask_data.forEach((s)=>{
         s=s.match(/[^=]+/ig);
         post_data[s[0]]=s[1];
     })
+    post_data.username=get_uuid(post_data.username);
     if(!server[post_data.username]||server[post_data.username]!=post_data.serverId){
         res_head[0]=204;
         return;

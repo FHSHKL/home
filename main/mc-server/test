@@ -1,10 +1,14 @@
 <?
     function get_uuid(name){
         const map="0123456789abcdef";
-        var hash=fhs.md5(`OfflinePlayer:${name}`);
+        var hash=fhs.md5(`OfflinePlayer:${name}`).split('');
         hash[12]='3';
         hash[16]=map[parseInt(`0x${hash[16]}`)&3|8];
-        return hash;
+        return hash.join('');
     }
+    console.log(get_uuid(ask));
+    var s=fhs.decode_base64(ask);
+    var ss=fhs.encode_base64(s);
+    console.log(s,ss);
     return get_uuid(ask);
 ?>

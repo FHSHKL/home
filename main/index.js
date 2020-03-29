@@ -11,9 +11,10 @@ function append_file(dir,file){return fs.appendFileSync(dir,file);}
 
 var html=http.createServer();
 var htmls=https.createServer({
-    key: fs.readFileSync(`${fhs.config.dir}/main/fhs.key`),
-    cert: fs.readFileSync(`${fhs.config.dir}/main/fhs.crt`)
+    key: fhs.key,
+    cert: fhs.cert
 });
+var req_list=JSON.parse(fhs.get_file(`${fhs.config.dir}/data/main/req_list.json`)).list;
 
 function work_message(request,responce,ser_type,post_data){
     var url=decodeURIComponent(request.url);
@@ -33,31 +34,43 @@ function work_message(request,responce,ser_type,post_data){
         return;
     }
     var res_head=[200,{
-        "content-type":mime.getType(url)||"text/html",
+        "content-type":mime.getType(url),
         "charset":"utf-8"
     }];
-    if(res_head[1]["content-type"].match(/application|text/i)){
-        web_cli=web_cli.toString('utf-8');
-        for(var i=0;i<web_cli.length;i++){
-            if(web_cli.slice(i-1,i+1)=="<?"){
-                var ta=i+1;
-                while(ta<web_cli.length-1&&(web_cli[ta]!='?'||web_cli[ta+1]!='>'))ta++;
-                i=web_cli.length-i;
-                var bef=web_cli.slice(0,web_cli.length-i-2+1);
-                var aft=web_cli.slice(ta+2,web_cli.length+1);
-                var mid;
-                try{
-                    mid=eval(`(function(){${web_cli.slice(web_cli.length-i+1,ta-1+1)}})(this)`)||"";
-                }
-                catch(err){
-                    mid="\"server-err\"";
-                    console.log(err);
-                }
-                web_cli=bef+mid+aft;
-                i=web_cli.length-i;
+    for(var i=0;i<req_list.length;i++){
+        if(url.match(req_list[i].reg)){
+            try{
+                eval(req_list[i].opt);
+            }
+            catch(err){
+                console.log(`[ser-err]req_list:${err}`);
             }
         }
-        web_cli=web_cli.replace(/  |\t|\n/ig,'');
+    }
+    if(!res_head[1]["content-type"]||res_head[1]["content-type"].match(/(text|application)/g)){
+        web_cli=web_cli.toString('utf-8');
+        if(web_cli.match(/<?/)){
+            for(var i=0;i<web_cli.length;i++){
+                if(web_cli.slice(i-1,i+1)=="<?"){
+                    var ta=i+1;
+                    while(ta<web_cli.length-1&&(web_cli[ta]!='?'||web_cli[ta+1]!='>'))ta++;
+                    i=web_cli.length-i;
+                    var bef=web_cli.slice(0,web_cli.length-i-2+1);
+                    var aft=web_cli.slice(ta+2,web_cli.length+1);
+                    var mid;
+                    try{
+                        mid=eval(`(function(){${web_cli.slice(web_cli.length-i+1,ta-1+1)}})(this)`)||"";
+                    }
+                    catch(err){
+                        mid="\"server-err\"";
+                        console.log(err);
+                    }
+                    web_cli=bef+mid+aft;
+                    i=web_cli.length-i;
+                }
+            }
+            //web_cli=web_cli.replace(/  |\t|\n/ig,'');
+        }
     }
     responce.writeHead(res_head[0],res_head[1]);
     responce.write(web_cli);

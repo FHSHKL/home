@@ -1,0 +1,11 @@
+{
+    "id":"1d3b331ad38230de9dada3aa82a73fbb",
+    "name":"FHS",
+    "properties":[
+        {
+            "name":"textures",
+            "value":"eyJpc1B1YmxpYyI6dHJ1ZSwicHJvZmlsZUlkIjoiMWQzYjMzMWFkMzgyMzBkZTlkYWRhM2FhODJhNzNmYmIiLCJwcm9maWxlTmFtZSI6IkZIUyIsInRleHR1cmVzIjp7IlNLSU4iOnsidXJsIjoiaHR0cHM6Ly9odW9rdWxvdS50azo2ODAwL21jLXNlcnZlci90ZXh0dXJlcy80ODQwOGUyOTkxNmJmMDM0Mjg5ZmI0ZDNhNDMyOTNkMzk4ZTlmN2JmYmIyOTE0NGJhNjY5OTkxYTA1ZWI4ZTk2In19LCJ0aW1lc3RhbXAiOjE1ODU0NzIyNzYzODR9"
+        }
+    ],
+    "userId":"fa727f7c0efb5b9fa4da73be3238e2a0"
+}

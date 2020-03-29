@@ -1,4 +1,5 @@
 <?
+    res_head[1]["content-type"]="text/html";
     if(ask){
         return fhs.md5(ask);
     }

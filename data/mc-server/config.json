@@ -3,5 +3,9 @@
         "serverName":"FHS",
         "implementationName":"FireHumansSkeleton",
         "implementationVersion":"1.14.4"
-    }
+    },
+    "skinDomains":[
+        "huokulou.tk"
+    ],
+    "signaturePublickey":"-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAzM1F0xtUzARWTEy3Fvys\norZ/aYjUFdxX4nAvWiTPQAUTinF1CCUYZSrlRe1jJxls1IL92WYguW02q3aleimP\nqiAZ4hJw8GTdMf7RZbDA/TqVus4Txi2Jdvv0exHTE85jyQaYBSXd9fv3MFZqjYhO\ntEgy5KgFDAKs/P83AkNyF3LJOV+MHIWWq8ioNIcjubLTVeEpq8Wpa6ajsFF/joVJ\nqcI5zxsu1nSD5YbBK2MnHaN2OGyr/vn/CC58x8JCq64sHWY1FOdbeqy+oCGS5OWR\nNKRkKtC/Nm+hG3bP/8bYZf5/bkvXbrRC2+iWdkpmr074YkB310+7K1X/mG/I2O8R\nsg36tO+NcMbsyp991G1OS1rV5mPPliUhhCYpZtiVi1nc2eHw4NsQWCBCx6yFo91J\n4PQssFTRvWh4KHV/d9Dhrb3ZZBmFMHxWXaouQT3Y5HvxLEMisAZgE/zpBw6TPLzA\ngBgxe9Cr3XQfCfcMkFpp0ufeWkMm7tZBpz0mulcf5yRqRljZwMaHUJBPw3hcAtkt\nRM+hnd2HSz+S9xVpQ9VDRfXVL6TzP6wHYADzT2I8crm0KNhxC6p0ifHtqF0tKk7Y\n1s35Vgl88N0xzP9/vyeBK4V6JPmk15BJvvH96ver9354OPZk3rpszRB1+ScltpAm\n47aVSzM/caS39WjlVG9d+1sCAwEAAQ==\n-----END PUBLIC KEY-----\n"
 }
