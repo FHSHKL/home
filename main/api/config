@@ -1,0 +1,39 @@
+<?
+    res_head=[200,{
+        "charset":"utf-8",
+        "Content-type":"application/json"
+    }];
+    bef=aft="";
+    if(request.method!="POST"){
+        res_head[0]=405;
+        return;
+    }
+    /*
+        {
+            "username":"402146748@qq.com",
+            "opt":[
+                {
+                    "key":"key",
+                    "value":"value"
+                }
+            ]
+        }
+    */
+    const user_dir=`${fhs.config.dir}/data/user/${fhs.md5(post_data.username)}`;
+    var user=fhs.user.login(post_data.username,post_data.password);
+    if(!user||!user.admin){
+        res_head[0]=403;
+    }
+    var res=[];
+    while(post_data.opt.length){
+        var opt=post_data.opt.pop();
+        try{
+            eval(`user.${opt.key}=${opt.value}`);
+            res.push(`opt:${post_data.opt.length} succeed`);
+        }
+        catch(err){
+            res.push(`opt:${post_data.opt.length} failed err:${err}`);
+        }
+    }
+    return JSON.stringify(res);
+?>
