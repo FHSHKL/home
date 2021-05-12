@@ -14,7 +14,7 @@
     "child_process": "^1.0.2",
     "fhs": "./node_modules/fhs",
     "mime": "^2.4.4",
-    "nodemailer": "^6.4.6",
+    "nodemailer": "^6.4.16",
     "ws": "^7.2.3"
   },
   "devDependencies": {}
